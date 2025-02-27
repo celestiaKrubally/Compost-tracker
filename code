@@ -1,0 +1,116 @@
+import datetime
+
+# Node class for linked list
+class CompostEntry:
+    def __init__(self, item, weight, date):
+        self.item = item
+        self.weight = weight  # in kg
+        self.date = date
+        self.next = None
+
+# Compost log using linked list
+class CompostLog:
+    def __init__(self):
+        self.head = None
+
+    def add_entry(self, item, weight):
+        try:
+            weight = float(weight)
+            date = datetime.date.today().strftime("%Y-%m-%d")
+            new_entry = CompostEntry(item, weight, date)
+            new_entry.next = self.head
+            self.head = new_entry
+            print(f"✅ Added {item} ({weight} kg) to the compost log.")
+        except ValueError:
+            print("❌ Invalid weight. Please enter a number.")
+
+    def view_log(self):
+        current = self.head
+        if not current:
+            print("📜 No compost logs available.")
+            return
+        print("\n📌 Compost Log:")
+        while current:
+            print(f" - {current.date}: {current.item} ({current.weight} kg)")
+            current = current.next
+
+# Queue for notifications
+class NotificationQueue:
+    def __init__(self):
+        self.queue = []
+
+    def add_notification(self, message):
+        self.queue.append(message)
+
+    def view_notifications(self):
+        if not self.queue:
+            print("🔔 No new notifications.")
+        else:
+            print("\n📢 Notifications:")
+            while self.queue:
+                print(f" - {self.queue.pop(0)}")
+
+# 2D Array for local resources
+class CompostResources:
+    def __init__(self):
+        self.resources = [
+            ["Local Drop-off Site", "123 Green St."],
+            ["Community Garden", "456 Eco Ave."],
+            ["Recycling Center", "789 Sustainability Rd."]
+        ]
+
+    def view_resources(self):
+        print("\n📍 Composting Resources:")
+        for i, (name, location) in enumerate(self.resources, start=1):
+            print(f" {i}. {name} - {location}")
+
+# User class
+class User:
+    def __init__(self, name):
+        self.name = name
+        self.compost_log = CompostLog()
+        self.notifications = NotificationQueue()
+        self.resources = CompostResources()
+
+    def log_waste(self, item, weight):
+        self.compost_log.add_entry(item, weight)
+        self.notifications.add_notification(f"Logged {item} ({weight} kg)")
+
+    def view_dashboard(self):
+        print(f"\n📊 Dashboard for {self.name}")
+        self.compost_log.view_log()
+        self.notifications.view_notifications()
+        self.resources.view_resources()
+
+# Main program
+def main():
+    user = User(input("Enter your name: "))
+    
+    while True:
+        print("\n🌱 Compost Tracking System 🌍")
+        print("1. Log food waste")
+        print("2. View compost log")
+        print("3. View notifications")
+        print("4. View compost resources")
+        print("5. Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == "1":
+            item = input("Enter compostable item: ")
+            weight = input("Enter weight (kg): ")
+            user.log_waste(item, weight)
+        elif choice == "2":
+            user.compost_log.view_log()
+        elif choice == "3":
+            user.notifications.view_notifications()
+        elif choice == "4":
+            user.resources.view_resources()
+        elif choice == "5":
+            print("👋 Goodbye!")
+            break
+        else:
+            print("❌ Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
