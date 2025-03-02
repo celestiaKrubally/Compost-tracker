@@ -1,17 +1,16 @@
-
-from flask import Flask
-import sqlite3  # <-- This is the missing import
+import sqlite3
+import datetime
+import threading
+import requests
+import matplotlib.pyplot as plt
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
 DB_FILE = 'compost_log.db'
+GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"  # Replace with your actual key
 
-# Your other functions, routes, and logic
-def view_log():
-    conn = sqlite3.connect(DB_FILE)
-    # other logic to handle the database
-
-
+# Initialize database
 def initialize_db():
     """Creates the SQLite database and compost_log table if they don't exist."""
     conn = sqlite3.connect(DB_FILE)
@@ -30,11 +29,9 @@ def initialize_db():
     conn.close()
     print("✅ Database initialized successfully!")
 
-if __name__ == "__main__":
-    initialize_db()
+initialize_db()
 
-# compost log features
-
+# Compost log features
 class CompostLog:
     @staticmethod
     def add_entry(item, weight):
@@ -45,7 +42,6 @@ class CompostLog:
         c.execute("INSERT INTO compost_log (item, weight, date) VALUES (?, ?, ?)", (item, weight, date))
         conn.commit()
         conn.close()
-        return f"✅ Added {item} ({weight} kg) to the compost log."
 
     @staticmethod
     def view_log():
@@ -65,37 +61,16 @@ class CompostLog:
         conn.close()
         return results
 
-    @staticmethod
-    def sort_logs(by="date"):
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        order_by = "date DESC" if by == "date" else "weight DESC"
-        c.execute(f"SELECT * FROM compost_log ORDER BY {order_by}")
-        logs = c.fetchall()
-        conn.close()
-        return logs
-
-
-# google api maps
-
-import requests
-
-GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"
-
+# Google Maps API for compost sites
 class CompostResources:
     @staticmethod
     def get_nearby_compost_sites(location="New York"):
-        """Fetches compost sites using Google Maps API"""
         url = f"https://maps.googleapis.com/maps/api/place/textsearch/json?query=compost+site+near+{location}&key={GOOGLE_MAPS_API_KEY}"
         response = requests.get(url)
         data = response.json()
         return [(place["name"], place["formatted_address"]) for place in data.get("results", [])]
 
-
-#  multi threading for background notifs
-
-import threading
-
+# Notifications
 class NotificationSystem:
     def __init__(self):
         self.notifications = []
@@ -109,7 +84,6 @@ class NotificationSystem:
 notification_system = NotificationSystem()
 
 def background_notifier():
-    """Sends notifications in the background"""
     while True:
         notification_system.add_notification("⏳ Reminder: Check your compost log!")
         threading.Event().wait(60 * 60)  # Notify every hour
@@ -117,15 +91,7 @@ def background_notifier():
 notifier_thread = threading.Thread(target=background_notifier, daemon=True)
 notifier_thread.start()
 
-
-
-
-# gui
-
-from flask import Flask, render_template, request, redirect
-
-app = Flask(__name__)
-
+# Routes
 @app.route("/")
 def home():
     logs = CompostLog.view_log()
@@ -136,7 +102,7 @@ def home():
 def add_entry():
     item = request.form["item"]
     weight = request.form["weight"]
-    message = CompostLog.add_entry(item, weight)
+    CompostLog.add_entry(item, weight)
     notification_system.add_notification(f"New log added: {item} ({weight} kg)")
     return redirect("/")
 
@@ -146,40 +112,13 @@ def search_log():
     results = CompostLog.search_log(query)
     return render_template("search.html", results=results)
 
-@app.route("/graph")
-def graph():
-    CompostGraph.plot_waste_trends()
-    return redirect("/")
-
 @app.route("/resources")
 def compost_sites():
-    location = "New York"  # Replace with user location
+    location = "New York"  # Replace with user location if needed
     sites = CompostResources.get_nearby_compost_sites(location)
     return render_template("resources.html", sites=sites)
 
 if __name__ == "__main__":
     app.run(debug=True)
 
-
-# data vis
-
-
-class CompostGraph:
-    @staticmethod
-    def plot_waste_trends():
-        logs = CompostLog.view_log()
-        if not logs:
-            return "No data available to plot."
-
-        dates = [entry[3] for entry in logs]
-        weights = [entry[2] for entry in logs]
-
-        plt.figure(figsize=(8, 5))
-        plt.plot(dates, weights, marker="o", linestyle="-", color="green")
-        plt.xlabel("Date")
-        plt.ylabel("Weight (kg)")
-        plt.title("Compost Weight Trends")
-        plt.xticks(rotation=45)
-        plt.grid()
-        plt.show()
 

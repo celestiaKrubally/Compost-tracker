@@ -1,0 +1,25 @@
+<!-- templates/search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Compost Logs</title>
+</head>
+<body>
+    <h1>Search Compost Logs</h1>
+    <form action="/search" method="POST">
+        <input type="text" name="query" placeholder="Search for an item" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Search Results</h2>
+    <ul>
+        {% for result in results %}
+            <li>{{ result[1] }} - {{ result[2] }} kg on {{ result[3] }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Back to Home</a>
+</body>
+</html>

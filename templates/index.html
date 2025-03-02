@@ -4,15 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compost App</title>
+    <title>Compost Tracker</title>
 </head>
 <body>
-    <h1>Welcome to the Compost App!</h1>
-    <p>Logs:</p>
+    <h1>Compost Tracker</h1>
+
+    <h2>Compost Log</h2>
+    <form action="/add" method="POST">
+        <input type="text" name="item" placeholder="Item (e.g., Banana Peel)" required>
+        <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" required>
+        <button type="submit">Add to Log</button>
+    </form>
+
+    <h2>Notifications</h2>
+    <ul>
+        {% for notification in notifications %}
+            <li>{{ notification }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Logs</h2>
     <ul>
         {% for log in logs %}
             <li>{{ log[1] }} - {{ log[2] }} kg on {{ log[3] }}</li>
         {% endfor %}
     </ul>
+
+    <a href="/search">Search Logs</a> | <a href="/resources">Nearby Compost Sites</a>
 </body>
 </html>
