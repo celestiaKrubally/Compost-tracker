@@ -1,4 +1,37 @@
 
+from flask import Flask
+import sqlite3  # <-- This is the missing import
+
+app = Flask(__name__)
+
+DB_FILE = 'compost_log.db'
+
+# Your other functions, routes, and logic
+def view_log():
+    conn = sqlite3.connect(DB_FILE)
+    # other logic to handle the database
+
+
+def initialize_db():
+    """Creates the SQLite database and compost_log table if they don't exist."""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS compost_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item TEXT,
+            weight REAL,
+            date TEXT
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+    print("✅ Database initialized successfully!")
+
+if __name__ == "__main__":
+    initialize_db()
 
 # compost log features
 
