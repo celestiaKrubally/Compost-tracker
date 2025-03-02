@@ -1,35 +1,147 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compost Tracker</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f3;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: #2d6a4f;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2d6a4f;
+            margin-top: 20px;
+        }
+
+        /* Form Styles */
+        form {
+            background: #fff;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #40916c;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2d6a4f;
+        }
+
+        /* Notifications & Logs */
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Links */
+        .links {
+            margin-top: 20px;
+        }
+
+        .links a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #2d6a4f;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #40916c;
+        }
+    </style>
 </head>
 <body>
-    <h1>Compost Tracker</h1>
 
-    <h2>Compost Log</h2>
+    <h1>Compost Tracker 🌱</h1>
+
+    <!-- Compost Entry Form -->
+    <h2>Add Compost Entry</h2>
     <form action="/add" method="POST">
         <input type="text" name="item" placeholder="Item (e.g., Banana Peel)" required>
         <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" required>
-        <button type="submit">Add to Log</button>
+        <button type="submit">➕ Add to Log</button>
     </form>
 
-    <h2>Notifications</h2>
-    <ul>
-        {% for notification in notifications %}
-            <li>{{ notification }}</li>
-        {% endfor %}
-    </ul>
+    <!-- Notifications Section -->
+    <div class="container">
+        <h2>🔔 Notifications</h2>
+        <ul>
+            {% for notification in notifications %}
+                <li>{{ notification }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-    <h2>Logs</h2>
-    <ul>
-        {% for log in logs %}
-            <li>{{ log[1] }} - {{ log[2] }} kg on {{ log[3] }}</li>
-        {% endfor %}
-    </ul>
+    <!-- Compost Log Entries -->
+    <div class="container">
+        <h2>📜 Compost Logs</h2>
+        <ul>
+            {% for log in logs %}
+                <li>📌 <strong>{{ log[1] }}</strong> - <em>{{ log[2] }} kg</em> on {{ log[3] }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-    <a href="/search">Search Logs</a> | <a href="/resources">Nearby Compost Sites</a>
+    <!-- Navigation Links -->
+    <div class="links">
+        <a href="/search">🔍 Search Logs</a> |
+        <a href="/resources">📍 Nearby Compost Sites</a>
+    </div>
+
 </body>
 </html>
