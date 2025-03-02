@@ -1,0 +1,18 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compost App</title>
+</head>
+<body>
+    <h1>Welcome to the Compost App!</h1>
+    <p>Logs:</p>
+    <ul>
+        {% for log in logs %}
+            <li>{{ log[1] }} - {{ log[2] }} kg on {{ log[3] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
