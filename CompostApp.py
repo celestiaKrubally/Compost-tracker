@@ -151,6 +151,8 @@ def background_notifier():
 notifier_thread = threading.Thread(target=background_notifier, daemon=True)
 notifier_thread.start()
 
+
+
 # Routes
 @app.route("/")
 def home():
@@ -168,20 +170,20 @@ def add_entry():
         notification_system.add_notification(f"❌ Failed to add log: {item} ({weight} kg)")
     return redirect("/")
 
-@app.route("/search", methods=["POST"])
+@app.route("/search", methods=["GET", "POST"])
 def search_log():
-    query = request.form["query"]
-    results = CompostLog.search_log(query)
-    return render_template("search.html", results=results)
+    if request.method == "POST":
+        query = request.form["query"]
+        results = CompostLog.search_log(query)
+        return render_template("search.html", results=results)
+    else:
+        return render_template("search.html", results=[])  # Show empty results if accessed via GET
 
 @app.route("/binary_search", methods=["POST"])
 def binary_search():
     query = request.form["query"]
-    result = CompostLog.binary_search_log(query)
-    if result:
-        return render_template("binary_search.html", result=result)
-    else:
-        return render_template("binary_search.html", result=None)
+    result = CompostLog.search_log(query)  # Mock binary search
+    return render_template("binary_search.html", result=result)
 
 @app.route("/resources")
 def compost_sites():
